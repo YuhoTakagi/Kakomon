@@ -20,12 +20,18 @@ export default function SignUpPage() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
-    // 簡易モック実装：実際の認証処理は別途実装してください
     setIsLoading(true)
     setError(null)
 
-    if (password !== repeatPassword) {
-      setError("パスワードが一致しません")
+    // バリデーション
+    if (!displayName || !email || !password || !repeatPassword) {
+      setError("すべての項目を入力してください")
+      setIsLoading(false)
+      return
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("有効なメールアドレスを入力してください")
       setIsLoading(false)
       return
     }
@@ -36,11 +42,19 @@ export default function SignUpPage() {
       return
     }
 
-    // デモ用：ネットワークリクエストを行わず成功として扱う
-    setTimeout(() => {
+    if (password !== repeatPassword) {
+      setError("パスワードが一致しません")
       setIsLoading(false)
-      router.push("/auth/sign-up-success")
-    }, 600)
+      return
+    }
+
+    // ここで実際のサインアップAPIを呼び出します
+    // 例: const response = await fetch('/api/auth/sign-up', { ... })
+    
+    // デモ用：2秒待機
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    router.push("/auth/sign-up-success")
   }
 
   return (

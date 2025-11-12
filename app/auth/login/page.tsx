@@ -8,6 +8,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { ChevronLeft } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 // PDFのデザインカンプ (8枚目) に基づいてレイアウトを変更
 export default function LoginPage() {
@@ -16,12 +17,48 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const { toast } = useToast()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    // 簡易モック：実際の認証は別途実装
-    alert("デモ：ログイン処理（モック）")
-    router.push("/home")
+    setError(null)
+    
+    // バリデーション
+    if (!email || !password) {
+      setError("メールアドレスとパスワードを入力してください")
+      return
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("有効なメールアドレスを入力してください")
+      return
+    }
+
+    if (password.length < 6) {
+      setError("パスワードは6文字以上です")
+      return
+    }
+
+    setIsLoading(true)
+    
+    try {
+      // ここで実際の認証APIを呼び出します
+      // 例: const response = await fetch('/api/auth/login', { ... })
+      
+      // デモ用：2秒待機
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      toast({
+        title: "ログイン成功",
+        description: `${email} でログインしました`,
+      })
+      
+      router.push("/home")
+    } catch (err) {
+      setError("ログインに失敗しました。もう一度お試しください。")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -59,7 +96,8 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-12 rounded-2xl" // PDFのスタイル
+                disabled={isLoading}
+                className="h-12 rounded-2xl"
               />
             </div>
             
@@ -72,7 +110,8 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-12 rounded-2xl" // PDFのスタイル
+                disabled={isLoading}
+                className="h-12 rounded-2xl"
               />
             </div>
           </div>
@@ -82,7 +121,7 @@ export default function LoginPage() {
           <div className="flex flex-col items-center gap-6">
             <Button 
               type="submit" 
-              className="w-full max-w-xs shadcn-button" // カスタムクラス
+              className="w-full max-w-xs shadcn-button"
               disabled={isLoading}>
               {isLoading ? "ログイン中..." : "ログイン"}
             </Button>

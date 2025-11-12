@@ -66,16 +66,36 @@ export default function SharePage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    // バリデーション
+    if (!title.trim()) {
+      alert("タイトルを入力してください")
+      return
+    }
+
+    if (!content.trim()) {
+      alert("問題内容を入力してください")
+      return
+    }
+
     setIsLoading(true)
 
-    // デモロジック
-    setTimeout(() => {
+    try {
+      // ここで実際のアップロードAPIを呼び出します
+      // 例: const response = await fetch('/api/exams', { ... })
+      
+      // デモ用：2秒待機
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
       // PDF 4枚目（アップロード成功）に遷移
       // 本来は sign-up-success ではなく、upload-success ページが良いが、
       // 既存のファイル構成を活かすため、文言が似ている sign-up-success を流用
-      alert("デモ：アップロード処理（モック）")
       router.push("/auth/sign-up-success") // 共有完了画面にリダイレクト
-    }, 500)
+    } catch (err) {
+      alert("アップロードに失敗しました")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (

@@ -39,17 +39,44 @@ export default function CreateQuestionPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // バリデーション
+    if (!title.trim()) {
+      alert("質問タイトルを入力してください")
+      return
+    }
+
+    if (!content.trim()) {
+      alert("質問内容を入力してください")
+      return
+    }
+
+    if (!selectedExam && !examId) {
+      alert("試験を選択してください")
+      return
+    }
+
     setIsLoading(true)
 
-    // デモロジック
-    setTimeout(() => {
-      alert("デモ：質問を投稿しました（モック）")
+    try {
+      // ここで実際の投稿APIを呼び出します
+      // 例: const response = await fetch('/api/questions', { ... })
+      
+      // デモ用：2秒待機
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
       if (selectedExam) {
         router.push(`/exams/${selectedExam}`)
+      } else if (examId) {
+        router.push(`/exams/${examId}`)
       } else {
         router.push("/home")
       }
-    }, 500)
+    } catch (err) {
+      alert("質問の投稿に失敗しました")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const displayExam = getMockExamById(selectedExam)
